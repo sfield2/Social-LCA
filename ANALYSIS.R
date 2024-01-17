@@ -53,10 +53,9 @@ energy_lcp <- create_lcp(x=energy,origin=origin,destination=destination)
 
 
 ###### STEP 2: BUILD COMBINED COST SURFACE #####################################
-# combine cost raster by standardizing values for each 
-# reverting one or the other so that higher costs (in energy and time expense)
+# combine cost raster by averaging standardized values from both surfaces
+# NOTE: May have to invert one or the other so that higher costs (in energy and time expense)
 # are both represented by higher values 
-# and multiplying rasters together
 
 # standardize time cs
 time_raster <- rasterise(time)
@@ -66,6 +65,13 @@ time_raster_stand_cs <- create_cs(time_raster_stand,neighbours=4, dem=NULL,max_s
 
 # ensure original time-based lcp and standardized time-based lcp are similar 
 time_stand_lcp <- create_lcp(x=time_raster_stand_cs,origin=origin,destination=destination)
+
+# NOTE: Differences occur between the two time-based paths (see plot below) as a result of transforming from transitionlayer to raster and back
+# which involves calcuating neighbor movement two-times (once in initial cost surface creation and once again in re-transforming standardized 
+# cost raster back to cost surface).
+# This is an imperfect, but the differences in the paths (especially once calculated iteratively as a corridor) seem to be minimal and should 
+# result in effectively similar path corridors
+# NOTE: Same issue arises with two energy-based paths
 
 plot(dem)
 points(sites)
